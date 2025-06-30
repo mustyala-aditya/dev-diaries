@@ -416,11 +416,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                   >
                     {favoriteCards.map((card, index) => (
-                      <motion.div
+                      <div
                         key={card.id}
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
                         className="flex-shrink-0 w-80"
                       >
                         <CardPreview
@@ -428,7 +425,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                           onToggleFavorite={toggleFavorite}
                           onClick={handleCardClick}
                         />
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -481,11 +478,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                   >
                     {recentCards.map((card, index) => (
-                      <motion.div
+                      <div
                         key={card.id}
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
                         className="flex-shrink-0 w-80"
                       >
                         <CardPreview
@@ -493,7 +487,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                           onToggleFavorite={toggleFavorite}
                           onClick={handleCardClick}
                         />
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -510,18 +504,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                 <h2 className="text-3xl font-bold text-white px-4">📚 More Cards</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4">
                   {remainingCards.slice(0, 8).map((card, index) => (
-                    <motion.div
-                      key={card.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
+                    <div key={card.id}>
                       <CardPreview
                         card={card}
                         onToggleFavorite={toggleFavorite}
                         onClick={handleCardClick}
                       />
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </motion.div>
@@ -562,18 +551,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                       {/* Cards Grid */}
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {cardsForDate.map((card, cardIndex) => (
-                          <motion.div
-                            key={card.id}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: (groupIndex * 0.1) + (cardIndex * 0.05) }}
-                          >
+                          <div key={card.id}>
                             <CardPreview
                               card={card}
                               onToggleFavorite={toggleFavorite}
                               onClick={handleCardClick}
                             />
-                          </motion.div>
+                          </div>
                         ))}
                       </div>
                     </motion.div>
@@ -623,18 +607,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {getDisplayCards().map((card, index) => (
-                      <motion.div
-                        key={card.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                      >
+                      <div key={card.id}>
                         <CardPreview
                           card={card}
                           onToggleFavorite={toggleFavorite}
                           onClick={handleCardClick}
                         />
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </motion.div>
