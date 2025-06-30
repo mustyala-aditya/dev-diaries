@@ -111,11 +111,25 @@ export const useCardStore = create<CardState>()(
     }),
     {
       name: 'card-store',
+      version: 1,
+      migrate: (persistedState: any, version: number) => {
+        // Handle migration from version 0 to version 1
+        if (version === 0) {
+          return {
+            ...persistedState,
+            cards: persistedState.cards || [], // Ensure cards is always an array
+            loading: persistedState.loading || false,
+            searchQuery: persistedState.searchQuery || '',
+            selectedTags: persistedState.selectedTags || [],
+          };
+        }
+        return persistedState;
+      },
       // Custom serialization to handle Date objects
       serialize: (state) => {
         return JSON.stringify({
           ...state,
-          cards: state.cards.map(card => ({
+          cards: (state.cards || []).map(card => ({
             ...card,
             createdAt: card.createdAt.toISOString(),
             updatedAt: card.updatedAt.toISOString()
@@ -133,7 +147,6 @@ export const useCardStore = create<CardState>()(
           })) || []
         };
       },
-      version: 1,
     }
   )
 );
