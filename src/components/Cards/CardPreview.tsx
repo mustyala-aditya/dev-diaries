@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { Heart, FileHeart as HeartFilled, ExternalLink, Calendar, Tag } from 'lucide-react';
 import { Card } from '../../types';
@@ -34,7 +33,7 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
   return (
     <div
       onClick={() => onClick(card)}
-      className="relative bg-gradient-to-br from-white/95 via-white/90 to-white/85 backdrop-blur-sm rounded-2xl border border-white/30 shadow-xl cursor-pointer overflow-hidden h-80 flex flex-col group transition-all duration-300 hover:transform hover:translate-y-[-8px] hover:scale-[1.02] hover:shadow-2xl"
+      className="card-preview relative bg-gradient-to-br from-white/95 via-white/90 to-white/85 backdrop-blur-sm rounded-2xl border border-white/30 shadow-xl cursor-pointer overflow-hidden h-80 flex flex-col group"
     >
       {/* Gradient overlay on hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
