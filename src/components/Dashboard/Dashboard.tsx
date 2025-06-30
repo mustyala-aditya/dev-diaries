@@ -266,6 +266,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
     searchCards('');
   };
 
+  // Check if we have search results to show
+  const currentQuery = searchQuery || localSearchQuery || globalSearchQuery;
+  const hasSearchQuery = currentQuery && currentQuery.trim();
+  const hasFilters = selectedTags.length > 0;
+  const showSearchResults = hasSearchQuery || hasFilters;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="space-y-12 pb-12">
@@ -379,37 +385,101 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                 </div>
               )}
 
-              {/* Navigation Bar */}
-              <div className="flex justify-center">
-                <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-2xl p-2 border border-white/20">
-                  {[
-                    { key: 'dashboard', label: 'Dashboard' },
-                    { key: 'all', label: 'All Cards' },
-                    { key: 'favorites', label: 'Favorites' },
-                    { key: 'recent', label: 'Recent' }
-                  ].map((view) => (
-                    <motion.button
-                      key={view.key}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setActiveView(view.key as any)}
-                      className={`px-6 py-3 text-sm font-medium rounded-xl transition-all duration-300 ${
-                        activeView === view.key
-                          ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                          : 'text-slate-300 hover:text-white hover:bg-white/10'
-                      }`}
-                    >
-                      {view.label}
-                    </motion.button>
-                  ))}
+              {/* Navigation Bar - Only show when not searching */}
+              {!showSearchResults && (
+                <div className="flex justify-center">
+                  <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-2xl p-2 border border-white/20">
+                    {[
+                      { key: 'dashboard', label: 'Dashboard' },
+                      { key: 'all', label: 'All Cards' },
+                      { key: 'favorites', label: 'Favorites' },
+                      { key: 'recent', label: 'Recent' }
+                    ].map((view) => (
+                      <motion.button
+                        key={view.key}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setActiveView(view.key as any)}
+                        className={`px-6 py-3 text-sm font-medium rounded-xl transition-all duration-300 ${
+                          activeView === view.key
+                            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
+                            : 'text-slate-300 hover:text-white hover:bg-white/10'
+                        }`}
+                      >
+                        {view.label}
+                      </motion.button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </motion.div>
         )}
 
-        {/* Dashboard View */}
-        {!showWelcome && activeView === 'dashboard' && (
+        {/* Search Results View - Show when searching */}
+        {!showWelcome && showSearchResults && (
+          <div className="px-8">
+            <AnimatePresence mode="wait">
+              {filteredCards.length > 0 ? (
+                <motion.div
+                  key="search-results"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-6"
+                >
+                  <h2 className="text-3xl font-bold text-white px-4">
+                    🔍 Search Results
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {filteredCards.map((card, index) => (
+                      <motion.div
+                        key={card.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <CardPreview
+                          card={card}
+                          onToggleFavorite={toggleFavorite}
+                          onClick={handleCardClick}
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="search-empty"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="text-center py-16"
+                >
+                  <div className="mx-auto h-32 w-32 bg-gradient-to-br from-slate-700 to-slate-800 rounded-full flex items-center justify-center mb-6">
+                    <Search className="h-16 w-16 text-slate-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-3">No cards found</h3>
+                  <p className="text-slate-400 mb-8 text-lg max-w-md mx-auto">
+                    Try adjusting your search or filter criteria
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleNewCard}
+                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-xl hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500/25 transition-all duration-300"
+                  >
+                    <Plus className="h-5 w-5 mr-2" />
+                    Create New Card
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
+        {/* Dashboard View - Only show when not searching */}
+        {!showWelcome && !showSearchResults && activeView === 'dashboard' && (
           <div className="space-y-12 px-8">
             {/* Favorites Section with Netflix-style Carousel */}
             {favoriteCards.length > 0 && (
@@ -559,8 +629,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
           </div>
         )}
 
-        {/* All Cards View with Date Grouping */}
-        {!showWelcome && activeView === 'all' && (
+        {/* All Cards View with Date Grouping - Only show when not searching */}
+        {!showWelcome && !showSearchResults && activeView === 'all' && (
           <div className="px-8">
             <AnimatePresence mode="wait">
               {groupedCards.length > 0 ? (
@@ -634,8 +704,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
           </div>
         )}
 
-        {/* Favorites and Recent Views */}
-        {!showWelcome && (activeView === 'favorites' || activeView === 'recent') && (
+        {/* Favorites and Recent Views - Only show when not searching */}
+        {!showWelcome && !showSearchResults && (activeView === 'favorites' || activeView === 'recent') && (
           <div className="px-8">
             <AnimatePresence mode="wait">
               {getDisplayCards().length > 0 ? (
