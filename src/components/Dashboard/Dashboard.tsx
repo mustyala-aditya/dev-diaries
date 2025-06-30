@@ -274,7 +274,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <div className="space-y-12 pb-12">
+      <div className="space-y-8 pb-12">
         {/* Welcome Section - Only show when no cards exist */}
         {showWelcome && (
           <motion.div
@@ -317,29 +317,29 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative"
+            className="relative px-8 pt-8"
           >
             {/* Background blur effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-800/50 via-slate-700/50 to-slate-800/50 backdrop-blur-xl rounded-3xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-800/30 via-slate-700/30 to-slate-800/30 backdrop-blur-xl rounded-3xl mx-8"></div>
             
-            <div className="relative space-y-8 p-8">
+            <div className="relative space-y-6 p-6">
               {/* Centered Search Bar */}
               <div className="flex justify-center">
                 <div className="relative w-full max-w-2xl">
                   <div className="absolute left-6 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
-                    <Search className="h-6 w-6 text-slate-400" />
+                    <Search className="h-5 w-5 text-slate-400" />
                   </div>
                   <input
                     type="text"
                     placeholder="Search your knowledge base..."
                     value={localSearchQuery}
                     onChange={(e) => setLocalSearchQuery(e.target.value)}
-                    className="w-full pl-16 pr-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400/50 transition-all duration-300 text-lg"
+                    className="w-full pl-14 pr-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400/50 transition-all duration-300 text-base"
                   />
                   {(localSearchQuery || selectedTags.length > 0) && (
                     <button
                       onClick={clearSearch}
-                      className="absolute right-6 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors duration-200"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors duration-200 text-lg"
                     >
                       ✕
                     </button>
@@ -350,7 +350,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
               {/* Search Results Info */}
               {(localSearchQuery || selectedTags.length > 0) && (
                 <div className="flex justify-center">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
                     <p className="text-sm text-slate-300">
                       Found {filteredCards.length} {filteredCards.length === 1 ? 'card' : 'cards'}
                       {localSearchQuery && ` for "${localSearchQuery}"`}
@@ -360,12 +360,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                 </div>
               )}
 
-              {/* Tags - Single line only, limited to 8 */}
+              {/* Tags - Limited to 9 tags in single row */}
               {allTags.length > 0 && (
                 <div className="flex justify-center">
-                  <div className="w-full max-w-4xl">
-                    <div className="flex space-x-3 justify-center flex-wrap">
-                      {allTags.map(tag => (
+                  <div className="w-full max-w-6xl">
+                    <div className="flex items-center justify-center space-x-3 overflow-hidden">
+                      {allTags.slice(0, 9).map(tag => (
                         <motion.button
                           key={tag}
                           whileHover={{ scale: 1.05, y: -2 }}
@@ -380,6 +380,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                           #{tag}
                         </motion.button>
                       ))}
+                      {allTags.length > 9 && (
+                        <span className="flex-shrink-0 px-3 py-2 bg-white/5 text-slate-400 text-sm rounded-full border border-white/10">
+                          +{allTags.length - 9} more
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -387,8 +392,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
 
               {/* Navigation Bar - Only show when not searching */}
               {!showSearchResults && (
-                <div className="flex justify-center">
-                  <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-2xl p-2 border border-white/20">
+                <div className="flex justify-center pt-2">
+                  <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-xl p-1.5 border border-white/20">
                     {[
                       { key: 'dashboard', label: 'Dashboard' },
                       { key: 'all', label: 'All Cards' },
@@ -400,7 +405,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => setActiveView(view.key as any)}
-                        className={`px-6 py-3 text-sm font-medium rounded-xl transition-all duration-300 ${
+                        className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
                           activeView === view.key
                             ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
                             : 'text-slate-300 hover:text-white hover:bg-white/10'
