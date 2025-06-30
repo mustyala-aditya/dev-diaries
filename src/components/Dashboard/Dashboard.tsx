@@ -58,6 +58,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
     searchCards(localSearchQuery);
   }, [localSearchQuery, searchCards]);
 
+
   // Calculate how many tags can fit in one row
   useEffect(() => {
     const calculateVisibleTags = () => {
@@ -80,6 +81,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
     
     return () => window.removeEventListener('resize', calculateVisibleTags);
   }, [allTags.length]);
+
 
   // Update scroll button states
   const updateScrollButtons = () => {
@@ -372,12 +374,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                 </div>
               </div>
 
+
               {/* Tags - Dynamic count based on container width */}
               {allTags.length > 0 && (
                 <div className="flex justify-center">
                   <div ref={tagsContainerRef} className="w-full max-w-6xl">
                     <div className="flex items-center justify-center space-x-3 overflow-hidden">
                       {allTags.slice(0, visibleTagsCount).map(tag => (
+
                         <motion.button
                           key={tag}
                           whileHover={{ scale: 1.05, y: -2 }}
@@ -392,9 +396,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                           #{tag}
                         </motion.button>
                       ))}
+
                       {allTags.length > visibleTagsCount && (
                         <span className="flex-shrink-0 px-3 py-2 bg-white/5 text-slate-400 text-sm rounded-full border border-white/10">
                           +{allTags.length - visibleTagsCount} more
+
                         </span>
                       )}
                     </div>
@@ -445,6 +451,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                   exit={{ opacity: 0 }}
                   className="space-y-6"
                 >
+
+                  <h2 className="text-3xl font-bold text-white px-4">
+                    🔍 Search Results
+                  </h2>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredCards.map((card, index) => (
                       <motion.div
