@@ -3,20 +3,33 @@ import { Card } from '../types';
 
 interface CardState {
   cards: Card[];
-  addCard: (card: Omit<Card, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  loading: boolean;
+  searchQuery: string;
+  selectedTags: string[];
+  addCard: (card: Omit<Card, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => void;
   updateCard: (id: string, updates: Partial<Card>) => void;
   deleteCard: (id: string) => void;
   toggleFavorite: (id: string) => void;
+  searchCards: (query: string) => void;
+  filterByTags: (tags: string[]) => void;
+  getRecentCards: () => Card[];
+  getFavoriteCards: () => Card[];
+  getAllTags: () => string[];
+  getUserCards: (userId: string) => Card[];
   getCardById: (id: string) => Card | undefined;
 }
 
 export const useCardStore = create<CardState>((set, get) => ({
   cards: [],
+  loading: false,
+  searchQuery: '',
+  selectedTags: [],
   
   addCard: (cardData) => {
     const newCard: Card = {
       ...cardData,
       id: crypto.randomUUID(),
+      userId: cardData.userId || '', // Ensure userId is set
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -50,6 +63,43 @@ export const useCardStore = create<CardState>((set, get) => ({
           : card
       ),
     }));
+  },
+
+  searchCards: (query) => {
+    set({ searchQuery: query });
+  },
+
+  filterByTags: (tags) => {
+    set({ selectedTags: tags });
+  },
+
+  getRecentCards: () => {
+    const { cards } = get();
+    return cards
+      .filter(card => card.updatedAt)
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+      .slice(0, 10);
+  },
+
+  getFavoriteCards: () => {
+    const { cards } = get();
+    return cards
+      .filter(card => card.favorite)
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+  },
+
+  getAllTags: () => {
+    const { cards } = get();
+    const tagSet = new Set<string>();
+    cards.forEach(card => {
+      card.tags.forEach(tag => tagSet.add(tag));
+    });
+    return Array.from(tagSet).sort();
+  },
+
+  getUserCards: (userId) => {
+    const { cards } = get();
+    return cards.filter(card => card.userId === userId);
   },
   
   getCardById: (id) => {
