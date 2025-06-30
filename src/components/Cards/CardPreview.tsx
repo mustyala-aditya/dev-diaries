@@ -32,17 +32,9 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
   };
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
+    <div
       onClick={() => onClick(card)}
-      className="relative bg-gradient-to-br from-white/95 via-white/90 to-white/85 backdrop-blur-sm rounded-2xl border border-white/30 shadow-xl cursor-pointer overflow-hidden h-80 flex flex-col group hover-card"
-      style={{
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-      }}
+      className="relative bg-gradient-to-br from-white/95 via-white/90 to-white/85 backdrop-blur-sm rounded-2xl border border-white/30 shadow-xl cursor-pointer overflow-hidden h-80 flex flex-col group transition-all duration-300 hover:transform hover:translate-y-[-8px] hover:scale-[1.02] hover:shadow-2xl"
     >
       {/* Gradient overlay on hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -132,6 +124,6 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
         {/* Hover indicator */}
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
       </div>
-    </motion.div>
+    </div>
   );
 };
