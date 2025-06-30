@@ -20,7 +20,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
     toggleFavorite,
     getRecentCards,
     getFavoriteCards,
-    getAllTags
+    getAllTags,
+    searchQuery: globalSearchQuery,
+    searchCards
   } = useCardStore();
 
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -48,6 +50,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
   const ensureDate = (date: string | Date): Date => {
     return typeof date === 'string' ? new Date(date) : date;
   };
+
+  // Update search in store when local search changes
+  useEffect(() => {
+    searchCards(localSearchQuery);
+  }, [localSearchQuery, searchCards]);
 
   // Update scroll button states
   const updateScrollButtons = () => {
@@ -103,16 +110,20 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
       updatedAt: ensureDate(card.updatedAt)
     }));
 
-    const currentQuery = searchQuery || localSearchQuery;
+    // Use the current search query (either from props, local state, or global state)
+    const currentQuery = searchQuery || localSearchQuery || globalSearchQuery;
 
     // Apply search filter
-    if (currentQuery.trim()) {
-      const query = currentQuery.toLowerCase();
-      filtered = filtered.filter(card =>
-        card.title.toLowerCase().includes(query) ||
-        card.content.toLowerCase().includes(query) ||
-        card.tags.some(tag => tag.toLowerCase().includes(query))
-      );
+    if (currentQuery && currentQuery.trim()) {
+      const query = currentQuery.toLowerCase().trim();
+      filtered = filtered.filter(card => {
+        const titleMatch = card.title.toLowerCase().includes(query);
+        const contentMatch = card.content.toLowerCase().includes(query);
+        const tagMatch = card.tags.some(tag => tag.toLowerCase().includes(query));
+        const explanationMatch = card.explanation.toLowerCase().includes(query);
+        
+        return titleMatch || contentMatch || tagMatch || explanationMatch;
+      });
     }
 
     // Apply tag filter
@@ -123,7 +134,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
     }
 
     return filtered.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
-  }, [userCards, searchQuery, localSearchQuery, selectedTags]);
+  }, [userCards, searchQuery, localSearchQuery, globalSearchQuery, selectedTags]);
 
   // Group cards by date for All Cards view
   const groupedCards = useMemo(() => {
@@ -162,15 +173,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
   };
 
   const getDisplayCards = () => {
+    const currentQuery = searchQuery || localSearchQuery || globalSearchQuery;
+    
     switch (activeView) {
       case 'favorites':
         return favoriteCards.filter(card => {
-          const currentQuery = searchQuery || localSearchQuery;
           if (!currentQuery.trim() && selectedTags.length === 0) return true;
           
           const matchesSearch = !currentQuery.trim() || 
             card.title.toLowerCase().includes(currentQuery.toLowerCase()) ||
             card.content.toLowerCase().includes(currentQuery.toLowerCase()) ||
+            card.explanation.toLowerCase().includes(currentQuery.toLowerCase()) ||
             card.tags.some(tag => tag.toLowerCase().includes(currentQuery.toLowerCase()));
           
           const matchesTags = selectedTags.length === 0 || 
@@ -180,12 +193,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
         });
       case 'recent':
         return recentCards.filter(card => {
-          const currentQuery = searchQuery || localSearchQuery;
           if (!currentQuery.trim() && selectedTags.length === 0) return true;
           
           const matchesSearch = !currentQuery.trim() || 
             card.title.toLowerCase().includes(currentQuery.toLowerCase()) ||
             card.content.toLowerCase().includes(currentQuery.toLowerCase()) ||
+            card.explanation.toLowerCase().includes(currentQuery.toLowerCase()) ||
             card.tags.some(tag => tag.toLowerCase().includes(currentQuery.toLowerCase()));
           
           const matchesTags = selectedTags.length === 0 || 
@@ -244,6 +257,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
       left: newScroll,
       behavior: 'smooth'
     });
+  };
+
+  // Clear search and filters
+  const clearSearch = () => {
+    setLocalSearchQuery('');
+    setSelectedTags([]);
+    searchCards('');
   };
 
   return (
@@ -310,8 +330,29 @@ export const Dashboard: React.FC<DashboardProps> = ({ searchQuery = '' }) => {
                     onChange={(e) => setLocalSearchQuery(e.target.value)}
                     className="w-full pl-16 pr-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400/50 transition-all duration-300 text-lg"
                   />
+                  {(localSearchQuery || selectedTags.length > 0) && (
+                    <button
+                      onClick={clearSearch}
+                      className="absolute right-6 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors duration-200"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
               </div>
+
+              {/* Search Results Info */}
+              {(localSearchQuery || selectedTags.length > 0) && (
+                <div className="flex justify-center">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
+                    <p className="text-sm text-slate-300">
+                      Found {filteredCards.length} {filteredCards.length === 1 ? 'card' : 'cards'}
+                      {localSearchQuery && ` for "${localSearchQuery}"`}
+                      {selectedTags.length > 0 && ` with tags: ${selectedTags.join(', ')}`}
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Tags - Single line only, limited to 8 */}
               {allTags.length > 0 && (
