@@ -37,14 +37,12 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      whileHover={{ 
-        y: -8, 
-        scale: 1.02,
-        transition: { duration: 0.2 }
-      }}
       transition={{ duration: 0.3 }}
       onClick={() => onClick(card)}
-      className="relative bg-gradient-to-br from-white/95 via-white/90 to-white/85 backdrop-blur-sm rounded-2xl border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden h-80 flex flex-col group"
+      className="relative bg-gradient-to-br from-white/95 via-white/90 to-white/85 backdrop-blur-sm rounded-2xl border border-white/30 shadow-xl cursor-pointer overflow-hidden h-80 flex flex-col group hover-card"
+      style={{
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+      }}
     >
       {/* Gradient overlay on hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -73,11 +71,9 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
             </div>
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+          <button
             onClick={handleFavoriteClick}
-            className={`p-2 rounded-full transition-all duration-200 flex-shrink-0 ${
+            className={`p-2 rounded-full transition-all duration-200 flex-shrink-0 hover:scale-110 ${
               card.favorite
                 ? 'text-red-500 bg-red-50 hover:bg-red-100 shadow-lg shadow-red-500/25'
                 : 'text-gray-400 hover:text-red-500 hover:bg-red-50'
@@ -88,7 +84,7 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
             ) : (
               <Heart className="h-4 w-4" />
             )}
-          </motion.button>
+          </button>
         </div>
 
         {/* Content Preview - Fixed height */}
