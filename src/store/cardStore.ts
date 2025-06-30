@@ -184,6 +184,7 @@ export const useCardStore = create<CardState>()(
       },
 
       searchCards: (query) => {
+        console.log('Search query updated:', query); // Debug log
         set({ searchQuery: query });
       },
 
